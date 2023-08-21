@@ -1,0 +1,114 @@
+<script src="resources/@insectos/ssh-exec/library.js"></script>
+<script type="text/javascript">
+  RED.nodes.registerType('ssh-exec', {
+    category: 'network',
+    inputs: 1,
+    outputs: 1,
+    color: '#D8BFD8',
+    icon: 'font-awesome/fa-terminal',
+    paletteLabel: 'ssh-exec',
+    defaults: {
+      sshconfig: {
+        value: '-manual-',
+        required: true
+      },
+      name: {
+        value: '',
+        required: false
+      },
+      host: {
+        value: '192.168.1.1',
+        required: true
+      },
+      port: {
+        value: 22,
+        required: true
+      },
+      username: {
+        value: 'root',
+        required: true
+      },
+      pass: {
+        value: '',
+        required: false
+      }
+    },
+    label: function () {
+      return this.name ? this.name : 'SSH Exec';
+    },
+    oneditprepare: function () {
+      let typedInput = getHostList(RED);
+      $('#node-input-sshconfig').typedInput(typedInput);
+      $('#node-input-sshconfig').on('change', function (evt) {
+        const isDefined = $('#node-input-sshconfig').val() !== '-manual-';
+        if (isDefined) {
+          $('.manualssh').hide();
+        } else {
+          $('.manualssh').show();
+        }
+      });
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="ssh-exec">
+  <div class="form-row">
+    <label for="node-input-sshconfig"><i class="fa fa-rocket"></i> ssh Config</label>
+    <input type="text" id="node-input-sshconfig">
+  </div>
+    <div class="form-row manualssh">
+      <label for="node-input-name"><i class="fa fa-globe"></i> Name</label>
+      <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row manualssh">
+      <label for="node-input-host"><i class="fa fa-globe"></i> Host</label>
+      <input type="text" id="node-input-host">
+    </div>
+    <div class="form-row manualssh">
+      <label for="node-input-port"><i class="fa fa-globe"></i> Port</label>
+      <input type="text" id="node-input-port">
+    </div>
+    <div class="form-row manualssh">
+      <label for="node-input-username"><i class="fa fa-globe"></i> Username</label>
+      <input type="text" id="node-input-username">
+    </div>
+    <div class="form-row">
+      <label for="node-input-pass"><i class="fa fa-globe"></i> Password</label>
+      <input type="text" id="node-input-pass">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="ssh-exec">
+  <p>SSH Command execution</p>
+
+  <h3>Inputs</h3>
+      <dl class="message-properties">
+      <dt>payload
+          <span class="property-type">string</span>
+      </dt>
+      <dd>The command that you wish to be sent to the remote shell</dd>
+    </dl>
+    <dl class="message-properties">
+      <dt>sshhost
+          <span class="property-type">string</span>
+      </dt>
+      <dd> Optional: overwrite the configured hostname, must exist in <code>.ssh/config</code>. Once switched, all subsequent commands use the new host</dd>
+    </dl>
+  <h3>Outputs</h3>
+    <dl class="message-properties">
+      <dt>payload
+          <span class="property-type">string</span>
+      </dt>
+      <dd> The result coming back from the SSH command</dd>
+    </dl>
+    <dl class="message-properties">
+      <dt>host
+          <span class="property-type">string</span>
+      </dt>
+      <dd>The IP address of the connected host. This is also returned on errors so can be used in conjunction with the Catch node so only one Catch node is needed to watch all uses of the SSH Command execution</dd>
+    </dl>
+  <h3>Details</h3>
+  <p>Simple wrapper around ssh2. You can connect to a configured host from your `.ssh/config` file or provide details manually</p>
+  <p>By checking the `Keep Open` box, it will attempt to reconnect to the SSH host if the connection is lost using an exponential backoff of up to 20 minutes.
+    You can use a Catch node to see what errors are thrown from the SSH node that aren't already being caught and handled.</p>
+</script>

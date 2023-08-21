@@ -1,0 +1,40 @@
+{
+  "name": "@insectos/ssh-exec",
+  "version": "0.2.0",
+  "description": "A flexible SSH client for Node-RED",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc --reporter=html --reporter=text mocha test/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/insectos/ssh-exec.git"
+  },
+  "keywords": [
+    "node-red",
+    "ssh",
+    "interactive"
+  ],
+  "author": "NotesSensei",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/insectos/ssh-exec/issues"
+  },
+  "homepage": "https://github.com/insectos/ssh-exec#readme",
+  "node-red": {
+    "nodes": {
+      "ssh-exec": "ssh-exec/ssh-exec.js"
+    }
+  },
+  "dependencies": {
+    "ssh-config": "^4.3.0",
+    "ssh2": "^1.14.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "sinon": "^15.2.0"
+  }
+}
