@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "description": "A flexible SSH client for Node-RED",
   "main": "index.js",
+  "engines": {
+    "node": ">18.0.0"
+  },
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha test/**/*.spec.js"
   },
@@ -22,6 +25,7 @@
   },
   "homepage": "https://github.com/insectos/ssh-exec#readme",
   "node-red": {
+    "version": ">3.0.0",
     "nodes": {
       "ssh-exec": "ssh-exec/ssh-exec.js"
     }
@@ -36,5 +40,8 @@
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "sinon": "^15.2.0"
+  },
+  "directories": {
+    "test": "test"
   }
 }
