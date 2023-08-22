@@ -21,6 +21,8 @@ module.exports = function (RED) {
       queue: []
     };
 
+    utils.closeStatus(node, config.host, 'restart');
+
     node.on('input', (msg) => {
       utils.processMessage(node, config, state, msg, password);
     });

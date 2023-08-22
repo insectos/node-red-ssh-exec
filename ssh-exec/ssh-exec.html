@@ -35,7 +35,10 @@
     inputLabels: 'payload to send to sshHost',
     outputLabels: 'ssh response',
     label: function () {
-      return this.name ? this.name : 'SSH Exec';
+      if (this.sshconfig != '-manual-') {
+        return 'ssh to ' + this.sshconfig;
+      }
+      return this.name ? this.name : 'ssh-exec';
     },
     oneditprepare: function () {
       let typedInput = getHostList(RED);
@@ -80,14 +83,14 @@
 </script>
 
 <script type="text/x-red" data-help-name="ssh-exec">
-  <p>SSH Command execution</p>
+  <p>SSH shell</p>
 
   <h3>Inputs</h3>
       <dl class="message-properties">
       <dt>payload
           <span class="property-type">string</span>
       </dt>
-      <dd>The command that you wish to be sent to the remote shell</dd>
+      <dd>The string that you wish to be sent to the remote shell. Use newline <code>\n</code> to execute commands</dd>
     </dl>
     <dl class="message-properties">
       <dt>sshhost
@@ -109,7 +112,7 @@
       <dd>The IP address of the connected host. This is also returned on errors so can be used in conjunction with the Catch node so only one Catch node is needed to watch all uses of the SSH Command execution</dd>
     </dl>
   <h3>Details</h3>
-  <p>Simple wrapper around ssh2. You can connect to a configured host from your `.ssh/config` file or provide details manually</p>
-  <p>By checking the `Keep Open` box, it will attempt to reconnect to the SSH host if the connection is lost using an exponential backoff of up to 20 minutes.
+  <p>Simple wrapper around ssh2. You can connect to a configured host from your <code>.ssh/config</code> file or provide details manually</p>
+  <p>
     You can use a Catch node to see what errors are thrown from the SSH node that aren't already being caught and handled.</p>
 </script>

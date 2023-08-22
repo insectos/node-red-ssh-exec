@@ -2,7 +2,7 @@
 
 Node that establishs a ssh terminal connection to a remote host. The remote host can be selected from `~/.ssh/config` and supports ssh keys. Wrapper around [ssh2](https://www.npmjs.com/package/ssh2)
 
-## Useage
+## Usage
 
 Select a host from the dropdown or provide manual configuration. Connection to the host will happen on first data received. Connections are reestablished as needed.
 
@@ -21,9 +21,18 @@ Use a Catch node to see what errors are thrown from the SSH node that aren't alr
 
 ## WIP
 
-- move setup to a config node, so credentials are encrypted
 - backfill unit tests
 
 ## Credits
 
 Inspired by [node-red-contrib-interactive-ssh](https://www.npmjs.com/package/node-red-contrib-interactive-ssh). Since the connection mechanism was completely redesigned, a new package is warranted
+
+## Change log
+
+### v0.3.0
+
+- Reorganised source to be more testable
+- moved password to (encrypted) credentials
+- node name shows host from `.ssh/config`
+- fixed handover of ssh passphrase
+- added example flow

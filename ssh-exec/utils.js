@@ -68,11 +68,11 @@ const extractHosts = () => {
  * @param {string} password
  * @returns {ssh2 config object}
  */
-const createConnectCfg = (config, msg, password) => {
+const createConnectCfg = (node, config, msg, password) => {
   let host = msg.sshhost ? msg.sshhost : config.sshconfig;
 
   if (host == '-manual-') {
-    console.log('Using manual configuration');
+    node.debug('Using manual configuration');
     return {
       host: config.host,
       port: config.port,
@@ -85,7 +85,7 @@ const createConnectCfg = (config, msg, password) => {
   let cfg = getSshCfg();
   let hostCfg = cfg.compute(host);
   let fileName = hostCfg.IdentityFile[0].replace('~', process.env.HOME);
-  console.log(`Using ssh config file ${fileName}`);
+  node.debug(`Using ssh config file ${fileName}`);
   const ssh_config = {
     host: hostCfg.Hostname,
     port: hostCfg.Port ?? 22,
@@ -131,7 +131,7 @@ const createClient = (node, state) => {
           return;
         }
 
-        console.log('Shell opened');
+        node.debug('Shell opened');
 
         node.stream = stream;
 
@@ -190,7 +190,7 @@ const processMessage = (node, config, state, msg, password) => {
   // Check if host was overwritten and needs reconnect
   const msghost = msg.sshhost;
   if (!state.ssh_config || (msghost && msghost != state.lastHost)) {
-    state.ssh_config = createConnectCfg(config, msg, password);
+    state.ssh_config = createConnectCfg(node, config, msg, password);
     if (state.connection) {
       state.connection.end();
       state.connection = undefined;
@@ -199,14 +199,14 @@ const processMessage = (node, config, state, msg, password) => {
 
   // (Re)build the client
   if (!state.connection) {
-    console.log('Create new client');
+    node.debug('Create new client');
     state.queue.push(data);
     state.connection = createClient(node, state);
     return;
   }
 
   if (!node.stream) {
-    console.log('Queuing up data');
+    node.debug('Queuing up data');
     state.queue.push(data);
     return;
   }
@@ -215,7 +215,6 @@ const processMessage = (node, config, state, msg, password) => {
     if (node.stream.writable) {
       node.stream.write(data);
     } else {
-      console.log('Stream not currently writable. Try again.');
       node.error('Stream not currently writable. Try again.', {
         errmsg: 'Stream not currently writable. Try again.'
       });
@@ -234,7 +233,6 @@ const processMessage = (node, config, state, msg, password) => {
  * @param {Error} e
  */
 const errorStatus = (node, host, e) => {
-  console.log(`Connection error: ${e.errno} ${e}`);
   node.error(`Connection error`, { errMsg: e, host: host });
   node.status({ fill: 'red', shape: 'ring', text: `error ${e}` });
 };
@@ -246,7 +244,7 @@ const errorStatus = (node, host, e) => {
  * @param {string} host
  */
 const connectStatus = (node, host) => {
-  console.log(`SSH Connected ${host}`);
+  node.log(`SSH Connected ${host}`);
   node.status({
     fill: 'green',
     shape: 'dot',
@@ -262,7 +260,7 @@ const connectStatus = (node, host) => {
  * @param {string} reason
  */
 const closeStatus = (node, host, reason) => {
-  console.log(`${reason}: Socket was disconnected from ${host}`);
+  node.log(`${reason}: Socket was disconnected from ${host}`);
   node.status({ fill: 'red', shape: 'ring', text: 'disconnected' });
 };
 
