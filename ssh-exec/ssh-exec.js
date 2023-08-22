@@ -10,6 +10,10 @@ module.exports = function (RED) {
     let password = this.credentials.pass;
     let node = this;
 
+    /**
+     * Tracking connection, last host,
+     * configuration settings and command queue
+     */
     let state = {
       connection: undefined,
       lastHost: config.host,
@@ -17,16 +21,19 @@ module.exports = function (RED) {
       queue: []
     };
 
-    node.on('input', function (msg) {
+    node.on('input', (msg) => {
       utils.processMessage(node, config, state, msg, password);
     });
 
-    node.on('close', function (done) {
-      state.connected = false;
-      node.stream.removeAllListeners();
-      node.stream.end('bye\r\n');
-      conn.removeAllListeners();
-      conn.end();
+    node.on('close', (done) => {
+      if (node.stream) {
+        node.stream.removeAllListeners();
+        node.stream.end('bye\r\n');
+      }
+      if (state.connection) {
+        state.connection.removeAllListeners();
+        state.connection.end();
+      }
       node.status({});
       done();
     });

@@ -21,6 +21,11 @@ const getStringFromFile = (source) => {
   return data;
 };
 
+/**
+ * Extracts an SSH configuration from `~/.ssh/config`
+ *
+ * @returns {ssh configuration}
+ */
 const getSshCfg = () => {
   if (!sshCfg) {
     let fileName = process.env.HOME + '/.ssh/config';
@@ -30,6 +35,12 @@ const getSshCfg = () => {
   return sshCfg;
 };
 
+/**
+ * Get the list of all Hosts configured
+ * in the local SSH configuration
+ *
+ * @returns {Array<string>}
+ */
 const extractHosts = () => {
   let cfg = getSshCfg();
   let result = [];
@@ -48,6 +59,15 @@ const extractHosts = () => {
   return result;
 };
 
+/**
+ * Get the ssh configuration either from the manual
+ * configuration or the .ssh/config file
+ *
+ * @param {NodeRED config object} config
+ * @param {NodeRED message} msg
+ * @param {string} password
+ * @returns {ssh2 config object}
+ */
 const createConnectCfg = (config, msg, password) => {
   let host = msg.sshhost ? msg.sshhost : config.sshconfig;
 
@@ -79,7 +99,14 @@ const createConnectCfg = (config, msg, password) => {
   return ssh_config;
 };
 
-// Create the client with event listeners
+/**
+ * Creates an SSH client with listeners
+ * for all events including incoming data stream
+ *
+ * @param {NodeRED node} node
+ * @param {sshState} state
+ * @returns {sshClient}
+ */
 const createClient = (node, state) => {
   let host = state.ssh_config.host;
   let Client = ssh2.Client;
@@ -131,8 +158,6 @@ const createClient = (node, state) => {
           stream.write(d);
         }
       });
-
-      // TODO: data
     })
     .on('close', function () {
       closeStatus(node, host, 'close');
@@ -148,7 +173,17 @@ const createClient = (node, state) => {
 
   return conn;
 };
-
+/**
+ * Processes an incoming messsage, establish the
+ * connection to ssh host and sends data async
+ *
+ * @param {NodeRED node} node
+ * @param {NodeRED config} config
+ * @param {sshState} state
+ * @param {NodeRED message} msg
+ * @param {string} password
+ * @returns
+ */
 const processMessage = (node, config, state, msg, password) => {
   const data = msg.payload;
 
@@ -190,12 +225,26 @@ const processMessage = (node, config, state, msg, password) => {
   }
 };
 
+/**
+ * Shortcut to register an error
+ * snd display a red dot
+ *
+ * @param {NodeRED node} node
+ * @param {string} host
+ * @param {Error} e
+ */
 const errorStatus = (node, host, e) => {
   console.log(`Connection error: ${e.errno} ${e}`);
   node.error(`Connection error`, { errMsg: e, host: host });
   node.status({ fill: 'red', shape: 'ring', text: `error ${e}` });
 };
 
+/**
+ * Shortcut show connected green dot
+ *
+ * @param {NodeRED node} node
+ * @param {string} host
+ */
 const connectStatus = (node, host) => {
   console.log(`SSH Connected ${host}`);
   node.status({
@@ -205,6 +254,13 @@ const connectStatus = (node, host) => {
   });
 };
 
+/**
+ * Shortcut to show disconnected state
+ *
+ * @param {NodeRED node} node
+ * @param {string} host
+ * @param {string} reason
+ */
 const closeStatus = (node, host, reason) => {
   console.log(`${reason}: Socket was disconnected from ${host}`);
   node.status({ fill: 'red', shape: 'ring', text: 'disconnected' });

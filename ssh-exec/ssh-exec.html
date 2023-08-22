@@ -32,6 +32,8 @@
     credentials: {
       pass: { type: 'password' }
     },
+    inputLabels: 'payload to send to sshHost',
+    outputLabels: 'ssh response',
     label: function () {
       return this.name ? this.name : 'SSH Exec';
     },
@@ -73,7 +75,7 @@
     </div>
     <div class="form-row">
       <label for="node-input-pass"><i class="fa fa-globe"></i> Password</label>
-      <input type="text" id="node-input-pass">
+      <input type="password" id="node-input-pass">
     </div>
 </script>
 
