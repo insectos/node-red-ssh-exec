@@ -1,0 +1,138 @@
+[
+  {
+    "id": "efc869c07b0e2986",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "b0174b1c20a3901b",
+    "type": "ssh-exec",
+    "z": "efc869c07b0e2986",
+    "sshconfig": "-manual-",
+    "name": "localhost",
+    "host": "192.168.1.1",
+    "port": 22,
+    "username": "root",
+    "x": 480,
+    "y": 120,
+    "wires": [["3b590c71d61c6c65"]]
+  },
+  {
+    "id": "a14fcb57b33ea5c8",
+    "type": "debug",
+    "z": "efc869c07b0e2986",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": true,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 850,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "543c75563434e468",
+    "type": "inject",
+    "z": "efc869c07b0e2986",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "x": 130,
+    "y": 80,
+    "wires": [["1c292bdb3dacfe73"]]
+  },
+  {
+    "id": "1c292bdb3dacfe73",
+    "type": "function",
+    "z": "efc869c07b0e2986",
+    "name": "Run ls -la",
+    "func": "msg.payload = \"ls -la\\n\";\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 80,
+    "wires": [["b0174b1c20a3901b"]]
+  },
+  {
+    "id": "3b590c71d61c6c65",
+    "type": "function",
+    "z": "efc869c07b0e2986",
+    "name": "buffer to string",
+    "func": "msg.payload = msg.payload.toString();\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 660,
+    "y": 120,
+    "wires": [["a14fcb57b33ea5c8"]]
+  },
+  {
+    "id": "d1a2484cd3102d8b",
+    "type": "inject",
+    "z": "efc869c07b0e2986",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "true",
+    "payloadType": "bool",
+    "x": 130,
+    "y": 160,
+    "wires": [["ed1708f6bf6648b3"]]
+  },
+  {
+    "id": "ed1708f6bf6648b3",
+    "type": "function",
+    "z": "efc869c07b0e2986",
+    "name": "Run exit",
+    "func": "msg.payload = \"exit\\n\";\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 300,
+    "y": 160,
+    "wires": [["b0174b1c20a3901b"]]
+  },
+  {
+    "id": "6c151fcdc47d6c5a",
+    "type": "catch",
+    "z": "efc869c07b0e2986",
+    "name": "",
+    "scope": null,
+    "uncaught": false,
+    "x": 680,
+    "y": 160,
+    "wires": [["a14fcb57b33ea5c8"]]
+  }
+]
