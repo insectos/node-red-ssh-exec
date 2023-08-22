@@ -27,11 +27,10 @@
       username: {
         value: 'root',
         required: true
-      },
-      pass: {
-        value: '',
-        required: false
       }
+    },
+    credentials: {
+      pass: { type: 'password' }
     },
     label: function () {
       return this.name ? this.name : 'SSH Exec';
