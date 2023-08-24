@@ -1,3 +1,6 @@
+/* (C) 2023, stwissel, Apache-2.0 license */
+'use strict';
+
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
