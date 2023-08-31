@@ -14,11 +14,16 @@ let sshCfg;
  * @returns {string}
  */
 const getStringFromFile = (source) => {
-  const data = fs.readFileSync(source, {
-    encoding: 'utf8',
-    flag: 'r'
-  });
-  return data;
+  try {
+    const data = fs.readFileSync(source, {
+      encoding: 'utf8',
+      flag: 'r'
+    });
+    return data;
+  } catch (e) {
+    console.error(e);
+  }
+  return '';
 };
 
 /**
@@ -84,15 +89,25 @@ const createConnectCfg = (node, config, msg, password) => {
 
   let cfg = getSshCfg();
   let hostCfg = cfg.compute(host);
-  let fileName = hostCfg.IdentityFile[0].replace('~', process.env.HOME);
+  let fileName = hostCfg.IdentityFile[0]
+    ? hostCfg.IdentityFile[0].replace('~', process.env.HOME)
+    : undefined;
   node.debug(`Using ssh config file ${fileName}`);
   const ssh_config = {
     host: hostCfg.Hostname,
     port: hostCfg.Port ?? 22,
     keepaliveInterval: 5000,
-    username: hostCfg.User,
-    privateKey: fs.readFileSync(fileName)
+    username: hostCfg.User
   };
+
+  if (fileName) {
+    try {
+      ssh_config.privateKey = fs.readFileSync(fileName);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   if (password) {
     ssh_config.passphrase = password;
   }

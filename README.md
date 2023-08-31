@@ -29,6 +29,10 @@ Inspired by [node-red-contrib-interactive-ssh](https://www.npmjs.com/package/nod
 
 ## Change log
 
+### v0.3.1
+
+- added a check for the .ssh/config file
+
 ### v0.3.0
 
 - Reorganised source to be more testable
