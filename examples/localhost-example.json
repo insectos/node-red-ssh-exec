@@ -63,7 +63,7 @@
     "type": "function",
     "z": "efc869c07b0e2986",
     "name": "Run ls -la",
-    "func": "msg.payload = \"ls -la\\n\";\nreturn msg;",
+    "func": "msg.payload = \"ls --color=never -la\\n\";\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
