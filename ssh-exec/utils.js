@@ -108,8 +108,13 @@ const createConnectCfg = (node, config, msg, password) => {
     }
   }
 
+  // Add password for user/pass or passphrase for key auth
   if (password) {
-    ssh_config.passphrase = password;
+    if (fileName) {
+      ssh_config.passphrase = password;
+    } else {
+      ssh_config.password = password;
+    }
   }
   return ssh_config;
 };
@@ -199,11 +204,14 @@ const createClient = (node, state) => {
  * @param {string} password
  * @returns
  */
-const processMessage = (node, config, state, msg, password) => {
+const processMessage = (node, config, state, msg, passwordCandidate) => {
   const data = msg.payload;
 
   // Check if host was overwritten and needs reconnect
   const msghost = msg.sshhost;
+  const password = msg.hasOwnProperty('sshpassword')
+    ? msg.sshpassword
+    : passwordCandidate;
   if (!state.ssh_config || (msghost && msghost != state.lastHost)) {
     state.ssh_config = createConnectCfg(node, config, msg, password);
     if (state.connection) {

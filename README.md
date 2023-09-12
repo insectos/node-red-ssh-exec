@@ -29,6 +29,12 @@ Inspired by [node-red-contrib-interactive-ssh](https://www.npmjs.com/package/nod
 
 ## Change log
 
+### v0.3.2
+
+- added `sshpassword` to the `msg` object to be able to pass in a sshkey passphrase
+- upgraded `ssh-config` to 4.4.0
+- fixed issue where password was ignored when selecting host that doesn't have a key file
+
 ### v0.3.1
 
 - added a check for the .ssh/config file
