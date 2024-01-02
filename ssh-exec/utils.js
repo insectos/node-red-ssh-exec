@@ -94,7 +94,7 @@ const createConnectCfg = (node, config, msg, password) => {
     : undefined;
   node.debug(`Using ssh config file ${fileName}`);
   const ssh_config = {
-    host: hostCfg.Hostname,
+    host: hostCfg.HostName ?? hostCfg.Hostname,
     port: hostCfg.Port ?? 22,
     keepaliveInterval: 5000,
     username: hostCfg.User
