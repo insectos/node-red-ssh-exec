@@ -21,6 +21,7 @@ module.exports = function (RED) {
       queue: []
     };
 
+    utils.resetSshCfg();
     utils.closeStatus(node, config.host, 'restart');
 
     node.on('input', (msg) => {
@@ -32,6 +33,7 @@ module.exports = function (RED) {
         node.stream.removeAllListeners();
         node.stream.end('bye\r\n');
       }
+
       if (state.connection) {
         state.connection.removeAllListeners();
         state.connection.end();

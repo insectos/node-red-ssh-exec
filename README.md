@@ -29,6 +29,12 @@ Inspired by [node-red-contrib-interactive-ssh](https://www.npmjs.com/package/nod
 
 ## Change log
 
+### v0.3.5
+
+- Change package name to `@insectos\node-red-ssh-exec`
+- Contributed by [@novski](https://github.com/novski): read Hostname & HostName
+- Return msg now includes original msg object custom properties
+
 ### v0.3.2
 
 - added `sshpassword` to the `msg` object to be able to pass in a sshkey passphrase

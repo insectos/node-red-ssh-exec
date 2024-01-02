@@ -8,6 +8,14 @@ const ssh2 = require('ssh2');
 let sshCfg;
 
 /**
+ * Resets the loaded ssh config on deployment
+ * of the ssh node, so you don't need to restart NodeRED
+ */
+const resetSshCfg = () => {
+  sshCfg = undefined;
+};
+
+/**
  * Reads synchronous the content of a text file
  * into a string
  * @param {string} source File name to read
@@ -74,7 +82,7 @@ const extractHosts = () => {
  * @returns {ssh2 config object}
  */
 const createConnectCfg = (node, config, msg, password) => {
-  let host = msg.sshhost ? msg.sshhost : config.sshconfig;
+  let host = msg.sshhost ?? config.sshconfig;
 
   if (host == '-manual-') {
     node.debug('Using manual configuration');
@@ -127,7 +135,7 @@ const createConnectCfg = (node, config, msg, password) => {
  * @param {sshState} state
  * @returns {sshClient}
  */
-const createClient = (node, state) => {
+const createClient = (msg, node, state) => {
   let host = state.ssh_config.host;
   let Client = ssh2.Client;
   let conn = new Client();
@@ -163,14 +171,22 @@ const createClient = (node, state) => {
           })
           .on('error', function (error) {
             errorStatus(node, host, error);
+            // 2 lines
+            state.connection = undefined;
+            node.stream = undefined;
           })
           .on('data', function (data) {
             connectStatus(node, host);
-            node.send({ host: host, payload: data });
+            msg.payload = data;
+            msg.host = host;
+            node.send(msg);
           })
           .stderr.on('data', function (data) {
             connectStatus(node, host);
-            node.send({ host: host, payload: data, stderr: true });
+            msg.payload = data;
+            msg.host = host;
+            msg.stderr = true;
+            node.send(msg);
           });
 
         while (state.queue.length > 0) {
@@ -208,23 +224,24 @@ const processMessage = (node, config, state, msg, passwordCandidate) => {
   const data = msg.payload;
 
   // Check if host was overwritten and needs reconnect
-  const msghost = msg.sshhost;
+  const msghost = msg.sshhost ?? config.sshconfig;
   const password = msg.hasOwnProperty('sshpassword')
     ? msg.sshpassword
     : passwordCandidate;
-  if (!state.ssh_config || (msghost && msghost != state.lastHost)) {
-    state.ssh_config = createConnectCfg(node, config, msg, password);
+  if (!state.ssh_config || msghost != state.lastHost) {
     if (state.connection) {
       state.connection.end();
       state.connection = undefined;
     }
+    node.debug(`Create Config for ${msghost}`);
+    state.ssh_config = createConnectCfg(node, config, msg, password);
   }
 
   // (Re)build the client
   if (!state.connection) {
-    node.debug('Create new client');
+    node.debug(`Create new client for ${msghost}`);
     state.queue.push(data);
-    state.connection = createClient(node, state);
+    state.connection = createClient(msg, node, state);
     return;
   }
 
@@ -295,5 +312,6 @@ module.exports = {
   connectStatus: connectStatus,
   closeStatus: closeStatus,
   createClient: createClient,
-  processMessage: processMessage
+  processMessage: processMessage,
+  resetSshCfg: resetSshCfg
 };
