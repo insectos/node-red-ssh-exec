@@ -97,6 +97,10 @@ const createConnectCfg = (node, config, msg, password) => {
 
   let cfg = getSshCfg();
   let hostCfg = cfg.compute(host);
+  if (Object.keys(hostCfg).length < 1) {
+    errorStatus(node, host, new Error(`Host ${host} is not in your config`));
+    return;
+  }
   let fileName = hostCfg.IdentityFile[0]
     ? hostCfg.IdentityFile[0].replace('~', process.env.HOME)
     : undefined;
