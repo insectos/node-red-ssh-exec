@@ -1,4 +1,4 @@
-# @insectos/ssh-exec
+# @insectos/node-red-ssh-exec
 
 Node that establishs a ssh terminal connection to a remote host. The remote host can be selected from `~/.ssh/config` and supports ssh keys. Wrapper around [ssh2](https://www.npmjs.com/package/ssh2)
 
@@ -29,9 +29,14 @@ Inspired by [node-red-contrib-interactive-ssh](https://www.npmjs.com/package/nod
 
 ## Change log
 
+### v0.3.6
+
+- dependency updates
+- resubmission to NodeRED
+
 ### v0.3.5
 
-- Change package name to `@insectos\node-red-ssh-exec`
+- Change package name to `@insectos/node-red-ssh-exec`
 - Contributed by [@novski](https://github.com/novski): read Hostname & HostName
 - Return msg now includes original msg object custom properties
 
